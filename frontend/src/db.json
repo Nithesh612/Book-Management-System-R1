@@ -1,0 +1,18 @@
+{
+  "books": [
+    {
+      "title": "Atomic Habits",
+      "author": "Motivation",
+      "genre": "James Clear",
+      "price": 299,
+      "id": "cd4d"
+    },
+    {
+      "title": "Think Like a Monk",
+      "author": "Motivation",
+      "genre": "Jay Shetty",
+      "price": 399,
+      "id": "f272"
+    }
+  ]
+}
