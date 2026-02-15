@@ -36,20 +36,22 @@ It demonstrates practical implementation of full-stack development using the MER
 
 ```
 Book-Management-System-R1/
-│
 ├── backend/
 │   ├── models/
 │   ├── routes/
 │   ├── controllers/
 │   └── server.js
-│
 ├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── App.js
-│
+│   │   └── app/
+│   │       ├── book_create/
+│   │       ├── book_details/[id]/
+│   │       ├── book_edit/[id]/
+│   │       ├── book_read/
+│   │       ├── layout.js
+│   │       ├── page.js
+│   │       └── globals.css
 ├── package.json
 └── README.md
 ```
