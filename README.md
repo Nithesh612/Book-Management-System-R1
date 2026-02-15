@@ -13,12 +13,12 @@ It demonstrates practical implementation of full-stack development using the MER
 
 ## Tech Stack
 
-- **Frontend:** React.js  
+- **Frontend:** Next.js (App Router), JavaScript  
 - **Backend:** Node.js, Express.js  
-- **Database:** MongoDB  
-- **API Handling:** Axios  
-- **Version Control:** Git & GitHub  
-
+- **Database:** MySQL  
+- **API Communication:** Fetch API  
+- **Version Control:** Git & GitHub
+  
 ---
 
 ## Key Features
@@ -115,17 +115,12 @@ npm start
 
 ---
 
-## Learning Objectives
+## What This Project Demonstrates
 
-- Building RESTful APIs using Express.js  
-- Connecting MongoDB with Mongoose  
-- Managing React component state  
-- Integrating frontend with backend using Axios  
-- Structuring scalable full-stack applications  
+- Designing RESTful APIs using Express.js  
+- Connecting MySQL with Node.js  
+- Handling dynamic routing in Next.js  
+- Consuming REST APIs using Fetch  
+- Implementing full CRUD operations  
 
 ---
-
-## Author
-
-**Nithesh Kumar R**  
-GitHub: https://github.com/Nithesh612
