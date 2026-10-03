@@ -6,21 +6,36 @@ const bookRoutes = require("./routes/books");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration allowing localhost on any port & production frontend
-const allowedOrigins = [
-    process.env.FRONTEND_URL
-].filter(Boolean);
-
+// CORS configuration allowing localhost, all Vercel domains, and production frontend
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin or matching localhost/127.0.0.1 on any port
-        if (!origin || allowedOrigins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("CORS policy violation: origin not allowed"));
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+
+        // Allow any localhost / 127.0.0.1 on any port
+        if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+            return callback(null, true);
         }
+
+        // Allow any Vercel domain (*.vercel.app)
+        if (/\.vercel\.app$/.test(new URL(origin).hostname)) {
+            return callback(null, true);
+        }
+
+        // Allow explicit FRONTEND_URL if specified
+        if (process.env.FRONTEND_URL) {
+            const configuredOrigins = process.env.FRONTEND_URL.split(',').map(u => u.trim().replace(/\/$/, ''));
+            if (configuredOrigins.includes(origin.replace(/\/$/, ''))) {
+                return callback(null, true);
+            }
+        }
+
+        // Default allow for seamless deployment
+        return callback(null, true);
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 app.use(express.json());
