@@ -161,78 +161,17 @@ const BookDetails = () => {
 
     if (!book) {
         return (
-            <div style={{ maxWidth: '620px', margin: '50px auto 60px' }}>
-                <div
-                    className="shadow-sm text-center"
-                    style={{
-                        background: '#FFFFFF',
-                        borderRadius: '24px',
-                        border: '1px solid var(--border-subtle)',
-                        padding: '40px 30px',
-                        overflow: 'hidden'
-                    }}
-                >
-                    <div className="d-inline-flex align-items-center gap-2 mb-3">
-                        <span
-                            style={{
-                                fontSize: '11px',
-                                fontWeight: 800,
-                                background: 'rgba(239, 68, 68, 0.12)',
-                                color: '#EF4444',
-                                padding: '3px 10px',
-                                borderRadius: '20px',
-                                border: '1px solid rgba(239, 68, 68, 0.25)'
-                            }}
-                        >
-                            404 • RECORD NOT FOUND
-                        </span>
-                    </div>
-
-                    <div
-                        style={{
-                            width: '72px',
-                            height: '72px',
-                            borderRadius: '20px',
-                            background: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
-                            color: '#EF4444',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '30px',
-                            margin: '0 auto 18px',
-                            boxShadow: '0 8px 20px rgba(239, 68, 68, 0.2)'
-                        }}
-                    >
-                        <i className="bi bi-journal-x"></i>
-                    </div>
-
-                    <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '6px' }}>
-                        Publication #{id} Not Found
-                    </h3>
-
-                    <p className="text-muted" style={{ fontSize: '13.5px', maxWidth: '420px', margin: '0 auto 24px' }}>
-                        This catalogue record does not exist or may have been deleted from the database.
-                    </p>
-
-                    <div className="d-flex align-items-center justify-content-center gap-3">
-                        <Link
-                            href="/book_read"
-                            className="btn text-white d-inline-flex align-items-center gap-2"
-                            style={{
-                                background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                                border: 'none',
-                                borderRadius: '12px',
-                                padding: '10px 20px',
-                                fontSize: '13.5px',
-                                fontWeight: 700,
-                                boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
-                                textDecoration: 'none'
-                            }}
-                        >
-                            <i className="bi bi-arrow-left"></i> Return to Catalogue
-                        </Link>
-                    </div>
+            <div style={{ maxWidth: '580px', margin: '60px auto' }} className="text-center p-5 bg-white rounded-4 shadow-sm border">
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 16px' }}>
+                    <i className="bi bi-journal-x"></i>
                 </div>
+                <h4 className="fw-bold text-dark mb-2">Book Not Found</h4>
+                <p className="text-muted mb-4 small">
+                    The requested catalogue entry <span className="font-monospace">#{id}</span> does not exist or may have been deleted.
+                </p>
+                <Link href="/book_read" className="btn btn-primary px-4 py-2" style={{ borderRadius: '10px' }}>
+                    <i className="bi bi-arrow-left me-1"></i> Back to Library
+                </Link>
             </div>
         );
     }
