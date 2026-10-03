@@ -4,47 +4,51 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const NAV_ITEMS = [
+const MAIN_NAV_ITEMS = [
   {
     href: '/book_read',
-    icon: 'bi-collection-play-fill',
+    icon: 'bi-grid-1x2-fill',
     label: 'Dashboard',
+    badge: 'Library',
     match: (p) => p === '/' || p.startsWith('/book_read') || p.startsWith('/book_details'),
   },
   {
     href: '/book_create',
-    icon: 'bi-journal-plus',
+    icon: 'bi-plus-circle-fill',
     label: 'Add New Book',
+    badge: '+ New',
     match: (p) => p.startsWith('/book_create'),
-  },
-];
-
-const PAGE_META = [
-  {
-    match: (p) => p.startsWith('/book_create'),
-    title: 'Add New Book',
-    sub: 'Fill in the details to add a new book to your library',
-  },
-  {
-    match: (p) => p.startsWith('/book_edit'),
-    title: 'Edit Book',
-    sub: 'Update book information',
-  },
-  {
-    match: (p) => p.startsWith('/book_details'),
-    title: 'Book Details',
-    sub: 'View complete information about this book',
-  },
-  {
-    match: (p) => p === '/' || p.startsWith('/book_read'),
-    title: 'Dashboard',
-    sub: 'Manage and explore your entire book collection',
   },
 ];
 
 export default function AppShell({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Mobile drawer state
+  const [collapsed, setCollapsed] = useState(false); // Desktop mini sidebar state
   const pathname = usePathname();
+
+  // Load sidebar preference from localStorage on client mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('bookshelf_sidebar_collapsed');
+      if (saved !== null) {
+        setCollapsed(saved === 'true');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const toggleCollapse = () => {
+    setCollapsed((prev) => {
+      const nextState = !prev;
+      try {
+        localStorage.setItem('bookshelf_sidebar_collapsed', String(nextState));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextState;
+    });
+  };
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -61,11 +65,6 @@ export default function AppShell({ children }) {
     return () => { document.body.style.overflow = ''; };
   }, [sidebarOpen]);
 
-  const pageMeta = PAGE_META.find((m) => m.match(pathname)) || {
-    title: 'BookShelf',
-    sub: 'Book Management System',
-  };
-
   return (
     <>
       {/* ── Mobile overlay ─────────────────────────────── */}
@@ -75,53 +74,113 @@ export default function AppShell({ children }) {
         aria-hidden="true"
       />
 
-      {/* ── Sidebar ─────────────────────────────────────── */}
-      <aside className={`app-sidebar${sidebarOpen ? ' open' : ''}`} aria-label="Sidebar navigation">
-        {/* Brand */}
-        <Link href="/book_read" className="sidebar-brand">
-          <div className="sidebar-brand-icon">
-            <i className="bi bi-book-half"></i>
-          </div>
-          <div className="sidebar-brand-text">
-            <span className="sidebar-brand-name">BookShelf</span>
-            <span className="sidebar-brand-sub">Management System</span>
-          </div>
-        </Link>
+      {/* ── Sidebar (Next-Gen SaaS Redesign) ───────────── */}
+      <aside
+        className={`app-sidebar${sidebarOpen ? ' open' : ''}${collapsed ? ' collapsed' : ''}`}
+        aria-label="Sidebar navigation"
+      >
+        {/* Brand & Collapse Toggle */}
+        <div className="sidebar-brand-wrapper">
+          <Link href="/book_read" className="sidebar-brand" title="BookShelf Pro Management">
+            <div className="sidebar-brand-icon">
+              <i className="bi bi-book-half"></i>
+            </div>
+            <div className="sidebar-brand-text">
+              <div className="d-flex align-items-center gap-1.5">
+                <span className="sidebar-brand-name">BookShelf</span>
+                <span
+                  style={{
+                    fontSize: '9.5px',
+                    fontWeight: 800,
+                    background: 'rgba(99, 102, 241, 0.25)',
+                    color: '#A5B4FC',
+                    padding: '1px 6px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(99, 102, 241, 0.35)',
+                    letterSpacing: '0.04em'
+                  }}
+                >
+                  PRO
+                </span>
+              </div>
+              <span className="sidebar-brand-sub">Library System</span>
+            </div>
+          </Link>
 
-        <div className="sidebar-section-label">Navigation</div>
+          {/* Collapse Toggle Button (Expanded State) */}
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            className="sidebar-collapse-btn"
+            title="Collapse Sidebar (Mini Mode)"
+          >
+            <i className="bi bi-chevron-left"></i>
+          </button>
+        </div>
+
+        {/* Mini Expand Button (Visible only when Collapsed) */}
+        <div className="px-2">
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            className="sidebar-collapse-btn-mini"
+            title="Expand Sidebar"
+          >
+            <i className="bi bi-chevron-right"></i>
+          </button>
+        </div>
 
         {/* Nav links */}
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-link${item.match(pathname) ? ' active' : ''}`}
-            >
-              <i className={`bi ${item.icon} sidebar-link-icon`}></i>
-              <span>{item.label}</span>
-            </Link>
-          ))}
+          <div className="sidebar-section-label">Main Menu</div>
+          {MAIN_NAV_ITEMS.map((item) => {
+            const isActive = item.match(pathname);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`sidebar-link${isActive ? ' active' : ''}`}
+                title={collapsed ? item.label : undefined}
+              >
+                <i className={`bi ${item.icon} sidebar-link-icon`}></i>
+                {!collapsed && <span>{item.label}</span>}
+                {item.badge && !collapsed && (
+                  <span className="sidebar-badge">{item.badge}</span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User footer */}
         <div className="sidebar-footer">
-          <div className="sidebar-user">
-            <div className="sidebar-user-avatar">N</div>
-            <div className="sidebar-user-info">
-              <span className="sidebar-user-name">Nithesh</span>
-              <span className="sidebar-user-role">Administrator</span>
+          <div className="sidebar-user" title={collapsed ? "Nithesh Kumar • Administrator" : undefined}>
+            <div className="sidebar-user-avatar-wrap">
+              <div className="sidebar-user-avatar">N</div>
+              <div className="sidebar-user-online-badge"></div>
             </div>
-            <i
-              className="bi bi-three-dots-vertical"
-              style={{ color: 'rgba(255,255,255,0.3)', fontSize: '13px' }}
-            ></i>
+            {!collapsed && (
+              <>
+                <div className="sidebar-user-info">
+                  <span className="sidebar-user-name">Nithesh Kumar</span>
+                  <span className="sidebar-user-role">Administrator</span>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-link p-0 text-decoration-none sidebar-user-dots"
+                  style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', border: 'none', background: 'transparent' }}
+                  title="System Settings"
+                >
+                  <i className="bi bi-gear-fill"></i>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </aside>
 
       {/* ── Main content ─────────────────────────────────── */}
-      <main className="app-main">
+      <main className={`app-main${collapsed ? ' sidebar-collapsed' : ''}`}>
         <div className="page-content">
           {children}
         </div>

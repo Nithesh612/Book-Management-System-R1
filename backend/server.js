@@ -2,22 +2,19 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config({ quiet: true });
 const bookRoutes = require("./routes/books");
-const userRoutes = require("./routes/users");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Dynamic CORS configuration for local and hosted frontends
+// CORS configuration allowing localhost on any port & production frontend
 const allowedOrigins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or Postman)
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin or matching localhost/127.0.0.1 on any port
+        if (!origin || allowedOrigins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
             callback(null, true);
         } else {
             callback(new Error("CORS policy violation: origin not allowed"));
@@ -39,7 +36,6 @@ app.get("/health", (req, res) => {
 
 // API Routes
 app.use("/books", bookRoutes);
-app.use("/users", userRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
